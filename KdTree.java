@@ -137,12 +137,28 @@ public class KdTree {
 	public Point2D findnearest(Point2D p) {
 		if (size() == 0)
 			return null;
-		return nearest(root, p, true);
+		return nearest(root, p, true, root.p);
 	}
 ​
-	private Point2D nearest(Node node, Point2D p, boolean xcmp) {
-		// TODO Auto-generated method stub
-		return null;
+	private Point2D nearest(Node node, Point2D p, boolean xcmp, Point2D currentBest) {
+    if (node == null) return currentBest;
+    double currentBestDis = p.distanceTo(currentBest);
+    double disToRoot = p.distanceTo(node.p);
+    if (disToRoot < currentBestDis){
+        currentBestDis = disToRoot;
+        currentBest = node.p;
+    }
+
+    // an optimization is to first check the subtree on the same side of p corresponding to node
+    Point2D near, far;
+    if ((xcmp && p.x < node.p.x) || (!xcmp && p.y < node.p.y)){
+       near = nearest(node.lb, p, !xcmp, currentBest);
+       far = nearest(node.rt, p, !xcmp, near);
+    }else{
+       near = nearest(node.rt, p, !xcmp, currentBest);
+       far = nearest(node.lb, p, !xcmp, near);
+    }
+		return far;
 	}
 ​
 	/**
