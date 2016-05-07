@@ -84,31 +84,56 @@ public class BST{
   }
 
   /**
-  * get the rank of number x. return null if that number is not in the tree
-  * this is a bottom-up recrusion
+  * get the rank of number x. return -1 if that number is not in the tree
   */
   public int rank(int x){
-    TreeNode cur = search(x);
-    if (cur == null) return null;
     return rank(root,x);
   }
 
   public int rank(TreeNode root, int x){
-
+    if (root == null) return -1;
+    if (root.val == x) return 1 + size(root.left, x);
+    else if (root.val < x) return 1 + size(root.left) + rank(root.right, x);
+    else return rank(root.left, x);
   }
 
   /**
-  * get the insert rank of element x
+  * get the insert rank of element key. the insert rank is 1 based
   */
-  public int insertrank(int x){
-    // to be implemented.
+  public int insertrank(int key){
+    if (root == null) return 1;
+    return insertrank(root, key);
+  }
+
+  private int insertrank(TreeNdoe root, int x)
+  {
+    if (root.val == x) return 1 + size(root.left, x);
+    else if (root.val < x) {
+      if (root.right == null)
+        return 1 + size(root.left);
+      return 1 + size(root.left) + insertrank(root.right, x);
+    }
+    else {
+      if (root.left == null)
+        return 1;
+      return insertrank(root.left, x);
+    }
   }
 
   /**
   * find rank k elentment. k is 1-based
+  * when k is out of rank, we will return null.
   */
-  public int select(int rank){
+  public TreeNode select(int rank){
+    return select(root, rank);
+  }
 
+  private TreeNode select(TreeNdoe root, int rank){
+    if (root == null) return null;
+    int leftsize = size(root.left);
+    if (rank == leftsize + 1) return root;
+    else if (rank < leftsize + 1) return select(root.left, rank);
+    else return select(root.right, rank - leftsize - 1)
   }
 
   /**
