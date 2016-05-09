@@ -164,23 +164,82 @@ public class BST{
   /**
   * find the prev element of number x in BST
     return -1 if it is not exitst
+    The invariance is the prev can only in two place.
+    first, the path from root to the target, second, on the substree.
   */
-  public int prev(int x){
-
+  public TreeNode prev(int x){
+    if (root == null) return null;
+    TreeNode tempprev = x > root.val ? root : null;
+    TreeNode node = root;
+    while(node != null){
+      if (node.val < x){
+        if (tempprev != null && tempprev.val < node.val){
+          tempprev = node;
+        }
+        node = node.right;
+      }
+      else if (node.val > x)
+      {
+        node = node.left;
+      }
+      else break;
+    }
+    if (node == null){// no such node in the tree
+      return null;
+    }
+    //search the subtree.
+    if (node.left == null) return tempprev;
+    node = node.left;
+    while(node.right != null)
+      node = node.right;
+    return tempprev == null ? node : (tempprev.val > node.val ? tempprev.val : node.val);
   }
 
   /**
   * find the next element of number x in BST
     return -1 if it is not exitst
   */
-  public int next(int x){
-
+  public TreeNode next(int x){
+    if (root == null) return null;
+    TreeNode tempnext = x < root.val ? root : null;
+    TreeNode node = root;
+    while(node != null){
+      if (node.val > x){
+        if (tempnext != null && tempnext.val > node.val){
+          tempnext = node;
+        }
+        node = node.left;
+      }
+      else if (node.val < x)
+      {
+        node = node.right;
+      }
+      else break;
+    }
+    if (node == null){// no such node in the tree
+      return null;
+    }
+    //search the subtree.
+    if (node.right == null) return node;
+    node = node.right;
+    while(node.left != null)
+      node = node.left;
+    return tempnext == null ? node : (tempnext.val < node.val ? tempnext.val : node.val);
   }
 
   /**
   * return the iterator of the elements
   */
   public List<Integer> iterator(){
+    List<Integer> iterator = new ArrayList<Integer>();
+    dfs(root, iterator);
+    return iterator;
+  }
 
+  private void dfs(TreeNode root, List<Integer> res){
+    if (root == null) return;
+    dfs(root.left);
+    res.add(root.val);
+    dfs(root.right);
   }
 }
