@@ -167,64 +167,42 @@ public class BST{
     The invariance is the prev can only in two place.
     first, the path from root to the target, second, on the substree.
   */
-  public TreeNode prev(int x){
-    if (root == null) return null;
-    TreeNode tempprev = x > root.val ? root : null;
-    TreeNode node = root;
-    while(node != null){
-      if (node.val < x){
-        if (tempprev != null && tempprev.val < node.val){
-          tempprev = node;
-        }
-        node = node.right;
+  public TreeNode prev(TreeNode node){
+    if (node == null) return node;
+    if (node.left != null) return max(node.left);
+    TreeNode cur = root;
+    TreeNode prev = null;
+    while(cur != null){
+      if (cur.val < node.val){
+        prev = cur;
+        cur = cur.right;
       }
-      else if (node.val > x)
-      {
-        node = node.left;
-      }
+      else if (cur.val > node.val) cur = cur.left;
       else break;
     }
-    if (node == null){// no such node in the tree
-      return null;
-    }
-    //search the subtree.
-    if (node.left == null) return tempprev;
-    node = node.left;
-    while(node.right != null)
-      node = node.right;
-    return tempprev == null ? node : (tempprev.val > node.val ? tempprev.val : node.val);
+    return prev;
   }
 
   /**
   * find the next element of number x in BST
     return -1 if it is not exitst
   */
-  public TreeNode next(int x){
-    if (root == null) return null;
-    TreeNode tempnext = x < root.val ? root : null;
-    TreeNode node = root;
-    while(node != null){
-      if (node.val > x){
-        if (tempnext != null && tempnext.val > node.val){
-          tempnext = node;
-        }
-        node = node.left;
+  public TreeNode next(TreeNode node){
+    if (node == null) return node;
+    if (node.right != null) return min(node.right);
+    TreeNode cur = root;
+    TreeNode next = null;
+    while(cur != null){
+      if (cur.val < node.val){
+        cur = cur.right;
       }
-      else if (node.val < x)
-      {
-        node = node.right;
+      else if (cur.val > node.val){
+        next = cur;   // last time we see cur.val > node.val, then we achieve next.
+        cur = cur.left;
       }
       else break;
     }
-    if (node == null){// no such node in the tree
-      return null;
-    }
-    //search the subtree.
-    if (node.right == null) return node;
-    node = node.right;
-    while(node.left != null)
-      node = node.left;
-    return tempnext == null ? node : (tempnext.val < node.val ? tempnext.val : node.val);
+    return next;
   }
 
   /**
